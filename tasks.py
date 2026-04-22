@@ -33,18 +33,6 @@ def produce_traffic_data():
     payloads = create_work_item_payloads(filtered_data)
     save_work_item_payloads(payloads)
 
-@task
-def consume_traffic_data():
-    """
-    Inhuman Insurance, Inc. Artificial Intelligence System robot.
-    Consumes traffic data work items.
-    """
-    process_traffic_data()
-
-
-def process_traffic_data():
-    for item in workitems.inputs:
-        traffic_data = item.payload["traffic_data"]
 
 def load_traffic_data_as_table():
     json_data = json.load_json_from_file(TRAFFIC_JSON_FILE_PATH)
@@ -81,3 +69,24 @@ def save_work_item_payloads(payloads):
     for payload in payloads:
         variables = dict(traffic_data=payload)
         workitems.outputs.create(variables)
+
+
+
+
+
+
+@task
+def consume_traffic_data():
+    """
+    Inhuman Insurance, Inc. Artificial Intelligence System automation.
+    Consumes traffic data work items.
+    """
+    process_traffic_data()
+
+def process_traffic_data():
+    for item in workitems.inputs:
+        traffic_data = item.payload["traffic_data"]
+        validate_traffic_data(traffic_data)
+
+def validate_traffic_data(traffic_data):
+    return len(traffic_data["country"]) == 3
