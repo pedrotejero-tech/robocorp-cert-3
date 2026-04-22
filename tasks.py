@@ -21,7 +21,7 @@ def produce_traffic_data():
         overwrite=True,
     )
     traffic_data = load_traffic_data_as_table()
-    table.write_table_to_csv(traffic_data, "output/test.csv")
+    filtered_data = filter_and_sort_traffic_data(traffic_data)
 
 @task
 def consume_traffic_data():
@@ -34,3 +34,14 @@ def consume_traffic_data():
 def load_traffic_data_as_table():
     json_data = json.load_json_from_file(TRAFFIC_JSON_FILE_PATH)
     return table.create_table(json_data["value"])
+
+def filter_and_sort_traffic_data(data):
+    rate_key = "NumericValue"
+    max_rate = 5.0
+    gender_key = "Dim1"
+    both_genders = "BTSX"
+    year_key = "TimeDim"
+    table.filter_table_by_column(data, rate_key, "<", max_rate)
+    table.filter_table_by_column(data, gender_key, "==", both_genders)
+    table.sort_table_by_column(data, year_key, False)
+    return data
